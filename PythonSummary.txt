@@ -69,7 +69,7 @@ print(f"Cortege count: {len(myTuple)}")
 venv	--	віртуальне середовище для пакетів
  у консолі пропис: py -m venv .venv
 
-//python.exe -m pip install --upgrade pip
+//активувати venv
 	.venv\Scripts\activate.bat
 
 //оновляє установщик пакетів
@@ -120,9 +120,107 @@ django-admin startproject mysite silpo
 
 
 ---------------------------------------------- 	
-02_
+02_DecoratorsClosures
+
+Decorator -- ф-ція яка приймає в параметрах ф-цію і її змінює
+#
+	def my_decorator(func):
+		def private_decorator():
+			print("--My decorator--")
+			func()
+			print("--End decorator--")
+		return private_decorator
+	
+	@my_decorator		-- @ додаємо декоратор
+	def hello_message():
+		print("sasdfsdfsdfsdf")
+	
+	hello_message()		-- invoke ф-ції
+#
+Результат:
+	--My decorator--
+	sasdfsdfsdfsdf
+	--End decorator--
 
 
+Closures(замикання)	--	ф-ція замикається всередині і ми її повертаєм
+#
+	def view_msg(msg):
+		message = msg[0:9]	-- зріз тексту перші 9 символів
+		def private_func():		--замкнена ф-ція
+			print(message)
+		return private_func	--	вказівник на ф-цію
+	
+	ptr = view_msg("applebanana")
+	ptr()
+#
 
+yield(Генератор)	--	послідовнсіть return для foreach
+		те саме що Enum
+#
+	def get_yield_num():
+		yield 1
+		yield 2
+		yield 7
+	
+	for item in get_yield_num():
+		print(item, end="\t")	-- результат '1	2	7'
 
+	def yield_counter(n):
+		i=0;
+		while i<=n:
+			yield i
+			i +=2
+	
+	for item in yield_counter(8):
+		print(item, end="\t")	-- 0	2	4 	6	8
+#
+--------------------------
 
+pip freeze 						-- показує всі пакети
+pip freeze > requirements.txt		-- файл з пакетами
+
+cd silpo
+py manage.py createsuperuser		-- створ супер адміна
+ 
+py manage.py runserver 9581 
+	/і на саті 127.0.0.1:9581/admin
+
+## Working users Custom Django (cd silpo)
+```
+py manage.py startapp users			--створ окрему папку (як Identity)
+pip install Pillow 					--бібліотека для роботи з фото
+py manage.py makemigrations users
+py manage.py migrate
+```
+
+silpo > users > models.py
+
+#
+from django.contrib.auth.models import AbstractUser
+
+	class CustomUser(AbstractUser):
+		image_small = models.CharField(max_length=100, blank=True, null=True)
+		image_medium = models.CharField(max_length=100, blank=True, null=True)
+		image_large = models.CharField(max_length=100, blank=True, null=True)
+	
+	def __str__(self):		-- як ToString()
+		return self.email
+
+#
+
+silpo > mysite > settings.py
+
+	INSTALLED_APPS = [
+		'django.contrib.admin',
+		....
+		'users'		-- додаємо
+	]
+вказуємо що у авторизації буде використано відредагований AUTH_USER_MODEL
+	AUTH_USER_MODEL = 'users.CustomUser'
+
+В кінці роботи обов'язково пропис
+	pip freeze > requirements.txt
+
+---------------------------------------------- 	
+03_
