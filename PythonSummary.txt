@@ -1,0 +1,128 @@
+---------------------------------------------- 	
+ /$$$$$$$              /$$     /$$                           /$$      /$$ /$$$$$$$$ /$$$$$$$ 
+| $$__  $$            | $$    | $$                          | $$  /$ | $$| $$_____/| $$__  $$
+| $$  \ $$ /$$   /$$ /$$$$$$  | $$$$$$$   /$$$$$$  /$$$$$$$ | $$ /$$$| $$| $$      | $$  \ $$
+| $$$$$$$/| $$  | $$|_  $$_/  | $$__  $$ /$$__  $$| $$__  $$| $$/$$ $$ $$| $$$$$   | $$$$$$$ 
+| $$____/ | $$  | $$  | $$    | $$  \ $$| $$  \ $$| $$  \ $$| $$$$_  $$$$| $$__/   | $$__  $$
+| $$      | $$  | $$  | $$ /$$| $$  | $$| $$  | $$| $$  | $$| $$$/ \  $$$| $$      | $$  \ $$
+| $$      |  $$$$$$$  |  $$$$/| $$  | $$|  $$$$$$/| $$  | $$| $$/   \  $$| $$$$$$$$| $$$$$$$/
+|__/       \____  $$   \___/  |__/  |__/ \______/ |__/  |__/|__/     \__/|________/|_______/ 
+           /$$  | $$                                                                         
+          |  $$$$$$/                                                                         
+           \______/                                                                            
+---------------------------------------------- 	
+01_Python
+
+
+Перевірити наявність python
+
+cmd
+	python --version
+
+виконати код у Python через cmd: py main.py
+
+
+student = {
+    "name": "ivan",
+    "age": 52
+}
+print(student)	-- виведе весь словник
+
+ for key in student:
+     print(f"{key}: {student[key]}")
+ 
+
+	student["mail"]= "mail@com"	--	додати
+	del student["mail"]			--	видалити з словника
+
+
+mysqr = lambda x: x*x
+
+
+arr = [
+    {"name":"ivan", "age":65},
+    {"name":"asd", "age":45},
+    {"name":"bob", "age":12}
+]
+
+arr.sort(key=lambda x: x["age"])	--вбудована ф-ція сорту
+print(arr)
+
+
+	Cortege -- незмінний масив (immutable)
+myTuple = (45,45,45)
+
+try:
+    myTuple[0] = 178
+		
+	тип помилки	
+except TypeError as ex:
+    print(f"Error {ex}")
+
+print(f"Cortege count: {len(myTuple)}")
+---------
+
+	MVC python Django
+
+створ нову папку і додаємо README
+
+venv	--	віртуальне середовище для пакетів
+ у консолі пропис: py -m venv .venv
+
+//python.exe -m pip install --upgrade pip
+	.venv\Scripts\activate.bat
+
+//оновляє установщик пакетів
+	python.exe -m pip install --upgrade pip
+
+
+https://www.djangoproject.com/download/
+//установ Django
+	py -m pip install Django	
+
+cmd
+		py
+	>>> import django
+	>>> print(django.get_version())
+	>>> quit()
+
+
+//версія django
+	python -m django --version
+
+mkdir silpo
+ //у папці silpo утовр папку mysite
+django-admin startproject mysite silpo
+
+
+//запустить сервер
+	cd silpo
+	py manage.py runserver 9581
+
+
+хостимо базу на https://neon.com/
+
+
+
+беремо з neon підстав дані у silpo > mysite > settings.py
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': '',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
+        'PORT': '5432'
+    }
+	
+і у cmd пропис
+		pip install psycopg2-binary		--postgress бібліотеку
+		py manage.py migrate			-- застов міграції
+
+
+---------------------------------------------- 	
+02_
+
+
+
+
+
