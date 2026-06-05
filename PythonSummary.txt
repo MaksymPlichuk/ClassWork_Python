@@ -237,4 +237,168 @@ silpo > mysite > settings.py
 	pip freeze > requirements.txt
 
 ---------------------------------------------- 	
-03_
+03_OOP
+
+#
+	class Car:
+		def drive(this):	--this (без непрацює )метод належить класу
+			print("wroom wroom")
+		
+	bmw = Car()
+	bmw.drive()
+#
+#
+	class Animal:
+		def speak(this):
+			print("speaking")
+
+				//наслідування
+	class MiniPig(Animal):
+		def speak(this):		--override
+			print("weee-weeee")
+
+	pig = MiniPig()
+	pig.speak()
+
+
+//масив анонімним obj	
+	myAnimals = [MiniPig(), Dog()]
+	
+	for item in myAnimals:
+		item.speak()		--виведе "wee, woof"
+		
+		
+	def talk(obj):
+		obj.speak()		--вказівник на клас
+
+	talk(MiniPig())	
+#
+
+--
+Native AOT	--	Riok.Mapperly замість Automapper
+gofullpage extension
+---
+#
+	class Student:
+		def __init__(self):				--	ctor обов'язково self - this
+			self.name = "Ivan Fedorov"  -- public змінна
+
+	class Student:
+	    def __init__(self,name):	--ctor з параметрами
+			self.name = name
+			self._age = 20		-- protected змінна ( _ )
+			self.__hobby = ""		-- private змінна ( __ )
+/ToString()
+		def __str__(self):	
+			return f"Name: {self.name} age: {self._age}" 
+
+		def get_hobby(self):		--getter
+			return self.__hobby
+
+
+	ivan = Student("ivan")
+	print(ivan.get_hobby())
+	print(ivan)
+#
+--------------------------
+/активація venv лише у cmd НЕ powershell
+	.venv\Scripts\activate.bat 
+
+
+cd my_site > silpo > mysite (там де і settings.py)
+
+	стор views.py	-- як controller
+#
+	from django.http import HttpResponse
+	
+	def homepage(request):				--заглушка потім змін
+		return HttpResponse("Hello world")
+#
+
+mysite > urls.py
+	як маршрути Routes 
+		from . import views
+		
+		urlpatterns = [
+			path('admin/', admin.site.urls),
+		
+			path('', views.homepage)
+		]
+	
+ 
+silpo > папку templates
+	у ній home.html
+
+settings.py
+	TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            BASE_DIR / 'templates',		--вказує де знаходяться html файли	
+        ],
+
+*змін views.py
+
+	from django.shortcuts import render
+	
+	def homepage(request):
+		return render(request, "home.html")
+
+
+будемо редагувати HTML через Tailwind css
+ https://tailwindcss.com/docs/installation/play-cdn
+
+створ layout.html і переносимо унього все з home.html
+	ьуде змін main як Outlet
+
+	<main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+home.html
+#
+	{% extends "layout.html" %} -- замінить блоками контент у layout
+	
+	{% block content %}
+		<h1 class="text-3xl text-center font-bold">Django - чітко</h1>
+	{% endblock %}
+#
+
+ сторінка для реєстрації
+ silpo > users > templates > register.html
+
+my_site\silpo\users\views.py
+$
+	def register(request):
+		return render(request, "register.html")
+$
+
+
+  і my_site\silpo\users\ створ urls.py (МАРШРУТИЗАЦІЯ)
+#
+	from django.urls import path
+	from . import views
+	
+	app_name = "users"
+	
+	urlpatterns = [
+		path('register/', views.register, name='register'),
+	]
+#
+
+  my_site\silpo\mysite\urls.py
+    	from django.urls import path, include
+  
+  urlpatterns = [
+  	    ..
+        path('users/', include("users.urls")),
+        ..
+  ]
+
+---------------------------------------------- 	
+04_
+
+
+
+

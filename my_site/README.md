@@ -25,7 +25,7 @@ pip install -r requirements.txt
 cd silpo
 py manage.py migrate
 py manage.py runserver 9581
-
+```
 # Create SuperUser
 ```
 cd silpo
