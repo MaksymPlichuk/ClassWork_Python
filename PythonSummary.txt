@@ -123,6 +123,7 @@ django-admin startproject mysite silpo
 02_DecoratorsClosures
 
 Decorator -- ф-ція яка приймає в параметрах ф-цію і її змінює
+			як Middleware на C#
 #
 	def my_decorator(func):
 		def private_decorator():
@@ -175,6 +176,19 @@ yield(Генератор)	--	послідовнсіть return для foreach
 	for item in yield_counter(8):
 		print(item, end="\t")	-- 0	2	4 	6	8
 #
+| Запис            | Тип                | Приклад            |
+| ---------------- | ------------------ | ------------------ |
+| `*args`          | tuple              | `(1, 2, 3)`        |
+| `**kwargs`       | dict               | `{'name':'Max'}`   |
+| `func(*args)`    | розпакування tuple | `func(1,2,3)`      |
+| `func(**kwargs)` | розпакування dict  | `func(name='Max')` |
+
+def decorator(func):				--декоратор з параметрами
+    def wrapper(*args, **kwargs):
+        ...
+        return func(*args, **kwargs)
+    return wrapper
+
 --------------------------
 
 pip freeze 						-- показує всі пакети
