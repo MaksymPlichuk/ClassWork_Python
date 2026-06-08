@@ -397,8 +397,105 @@ $
   ]
 
 ---------------------------------------------- 	
-04_
+04_Django MVT
+
+										для файлів
+<form class="space-y-5" method="post" enctype="multipart/form-data" >
+
+{% csrf_token %}	--	як [ValidateAntiForgeryToken]
+
+my_site\silpo\users\forms.py
+	створ forms.py клас де буде форма для створення user
+
+#
+	from django.contrib.auth.forms import UserCreationForm
+	from django import forms
+	
+	from users.models import CustomUser 
+	
+	
+	class CustomUserForm(UserCreationForm):
+        
+            email = forms.EmailField(
+            label="Email from form.py",
+            required=True,
+            widget=forms.TextInput(attrs={
+                'class': 'w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-3 text-white placeholder-gray-500 focus:border-indigo-500 focus:outline-none', 
+                'placeholder': 'example@gmail.com'
+            })
+		)
+            first_name = forms.CharField(
+        label="Ім\'я",
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-3 text-white placeholder-gray-500 focus:border-indigo-500 focus:outline-none', 
+            'placeholder': 'Ім\'я з forms.py'
+            })
+        )
+  //фото     
+    image = forms.ImageField(
+       label="Зображення",
+       required=True,
+       widget=forms.FileInput(attrs={
+          'class': 'w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-3 text-white placeholder-gray-500 focus:border-indigo-500 focus:outline-none', 
+          'accept': 'image/*'
+         })
+      )
+     
+  //pass
+    password1 = forms.CharField(
+       label="Password",
+       required=True,
+       widget=forms.PasswordInput(attrs={
+          'class': 'w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-3 text-white placeholder-gray-500 focus:border-indigo-500 focus:outline-none', 
+          'placeholder': 'Password з forms.py'
+         })
+      )
+	
+		class Meta:         --вказ які поля 
+      model = CustomUser
+      fields = ("email","first_name","image","password1",)    
+#
+
+my_site\silpo\mysite\urls.py
+
+    urlpatterns = [
+        ...                     //вказ назву для редіректу
+        path('', views.homepage, name="homepage")
+    ]
+
+//тут редірект
+ my_site\silpo\users\views.py
+#
+    from django.shortcuts import render, redirect
+    from users.forms import CustomUserForm
+    from django.contrib import messages
+    
+    # Create your views here.
+    def register(request):
+        form = CustomUserForm(request.POST)
+//перевірка форми        
+        if form.is_valid():
+            return redirect("homepage")
+        else:
+            messages.info(request, "error")
+        else:
+            form = CustomUserForm()
+                                                передаємо об'єкт форми який вичитуватимемо на html
+        return render(request, "register.html",{"form":form})
+#
+<div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">
+          {{form.email.label}}
+        </label>
+        {{form.email}} -- сам форм береться з silpo\users\forms.py
+<div>
+
+  ctrl+tab перейти на змінну
 
 
+silpo\mysite\settings.py
+    LANGUAGE_CODE = 'uk-ua' -- змінити на укр
 
-
+---------------------------------------------- 	
+05_
