@@ -499,3 +499,175 @@ silpo\mysite\settings.py
 
 ---------------------------------------------- 	
 05_
+
+silpo\users\utils.py
+    щоб зберігати файли які передаються на сервер в окрему папку
+
+#
+import os                           -- роботи з папками
+from django.conf import settings    --  конфігурація Django
+from PIL import Image               -- для роботм з фото
+import io                -- для роботм з байтами
+import uuid               -- генерація унік імен
+from django.core.files.base import ContentFile # Файл який передав користувач
+
+def compress_image(image_field, size=(800,800), quality=85):
+  #якщо фото у PNG перетвор у RGB
+    image = Image.open(image_field).convert('RGB')
+  #Зберіг співвідношення
+    image.thumbnail(size, Image.LANCZOS)
+  #Генер рандом ім'я
+    uid = str(uuid.uuid4())[:10] #10символів назви
+    image_name='{}.webp'.format(uid)
+  
+  #фото зберіг у пам'ять
+    output = io.BytesIO()
+  #перетвор на webp  
+    image.save(output,format='WEBP', quality=quality)
+  #зміщ вказівник на початок  
+    output.seek(0)
+
+  #отрим саме фото
+    resized_image = ContentFile(output.getvalue())
+  #повертаємо назву і змін розмір
+    return resized_image, image_name
+    
+def save_custom_image(image, size, folder):
+    resized_image, image_name = compress_image(image,size)
+    path = os.path.join(folder, image_name)
+    full_path = os.path.join(settings.IMAGE_ROOT, path)     
+ #створ папку   
+    os.makedirs(full_path, exist_ok=True)
+    with open(full_path, "wb") as f:
+        f.write(resized_image.read())
+    return image_name   
+    
+//    def save_custom_image(image, size, folder):
+    resized_image, image_name = compress_image(image, size)
+    # Створюємо шлях до директорії та шлях до файлу
+    dir_path = os.path.join(settings.IMAGES_ROOT, folder)
+    full_path = os.path.join(dir_path, image_name)
+    # Створюємо папки, якщо їх ще не існує
+    os.makedirs(dir_path, exist_ok=True)
+    # Зберігаємо файл
+    with open(full_path, "wb") as f:
+        f.write(resized_image.read())
+ //   return image_name
+    
+ #щоб працювало пропис у silpo\mysite\settings.py
+                DJANGORESIZED_DEFAULT_SIZE = [1920, 1080]
+                DJANGORESIZED_DEFAULT_SCALE = 0.5
+                DJANGORESIZED_DEFAULT_QUALITY = 85
+                DJANGORESIZED_DEFAULT_KEEP_META = True
+                DJANGORESIZED_DEFAULT_FORCE_FORMAT = 'WEBP'
+                DJANGORESIZED_DEFAULT_FORMAT_EXTENSIONS = {'WEBP': ".webp"}
+                DJANGORESIZED_DEFAULT_NORMALIZE_ROTATION = True 
+#
+
+#silpo\users\forms.py Верифікація пошти на ункікальність
+     
+     class Meta:
+      model = CustomUser
+      fields = ("email","first_name","password","image","password1","password2",)  
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if CustomUser.objects.filter(email=email).exists():
+            raise forms.ValidationError("Дана пошта уже зареєстрована")
+        return email
+
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Паролі не співпадають.")
+        return password2
+#
+
+#silpo\users\views.py
+from django.contrib.auth import login, authenticate, logout
+from users.forms import CustomUserForm, CustomUserLoginForm
+
+ if request.method == "POST":
+        form = CustomUserForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+               #Оброб форму що заповнив користувач 
+                user = form.save(commit=False)
+                if 'email' in form.changed_data:
+                    user.username = form.cleaned_data['email']
+                if 'image' in request.FILES:
+                    image = request.FILES['image']
+                    user.image_small = save_custom_image(image, size=(300,300), folder='small')
+                    user.image_medium = save_custom_image(image,size=(800,800), folder='medium')
+                    user.image_large = save_custom_image(image,size=(1200,1200), folder='large')
+                user.save()
+                login(request, user)
+                return redirect("homepage")
+                
+            except Exception as e:
+                messages.error(request,f'Щось не так:{str(e)}')
+        .....
+#
+
+#silpo\users\forms.py 
+from django.contrib.auth.forms import UserCreationForm
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
+
+....
+    class CustomUserLoginForm(AuthenticationForm):
+        email = forms.EmailField(
+            label='Електронна пошта',
+            required=True,
+            widget=forms.TextInput(attrs={
+                'class': 'w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-3 text-white placeholder-gray-500 focus:border-indigo-500 focus:outline-none',
+                'placeholder': 'example@gmail.com'
+            })
+        )
+    
+        password = forms.CharField(
+            label='Пароль',
+            required=True,
+            widget=forms.PasswordInput(attrs={
+                'class': 'w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-3 text-white placeholder-gray-500 focus:border-indigo-500 focus:outline-none',
+                'placeholder': 'Вкажіть пароль'
+            })
+        )
+
+#silpo\users\views.py
+def user_login(request):
+    if request.method == 'POST':
+        form = CustomUserLoginForm(data=request.POST)
+        if form.is_valid():
+            user = authenticate(request, username=form.cleaned_data['email'],
+                                password=form.cleaned_data['password'])
+            if user is not None:
+                login(request, user)
+                return redirect('homepage')
+    else:
+        form = CustomUserLoginForm()
+    return render(request, 'login.html', {'form': form})
+
+def user_logout(request):
+    logout(request)
+    return redirect('homepage')
+#
+
+urlpatterns = [
+    path('register/', views.register, name='register'),
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
+]
+
+---------------------------------------------- 	
+06_
+
+
+
+
+
+
+
