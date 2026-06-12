@@ -663,11 +663,47 @@ urlpatterns = [
 ]
 
 ---------------------------------------------- 	
-06_
+06_Categories
 
+form.cleaned_data -- бере дані з form.py
 
+#silpo\mysite\urls.py --вказ шлях до сховища з картинки
+    from django.conf.urls.static import static
+    from django.conf import settings
+     urlpatterns = [
+        ....
+    ]
+    urlpatterns += static(settings.IMAGES_URL, document_root=settings.IMAGES_ROOT)
+#
 
+#silpo\templates\layout.html --вимальовуємо на layout
+{% if request.user.is_authenticated %}
 
+                <div class="flex items-center gap-3 text-white">
 
+                    {% if request.user.image_small %}   --перевірка на картинку  
+                        <img src="images/small/{{ request.user.image_small}}"   --шлях до сховища
+                            class="w-9 h-9 rounded-full object-cover border border-slate-600">
+                    {% else %}
+                        <div class="w-9 h-9 rounded-full bg-slate-700 flex items-center justify-center text-sm">
+                            {{ request.user.username|first|upper }}
+                        </div>
+                    {% endif %}
+#
+#silpo\users\templates\login.html --показує помилки при валідації
+ {% if form.errors %}
+            <div class="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+            ...
+                {% if form.non_field_errors %}
+                    <div class="flex items-center gap-2">
+                        {% for error in form.non_field_errors %}
+                        {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+#
 
-
+---------------------------------------------- 	
+07_

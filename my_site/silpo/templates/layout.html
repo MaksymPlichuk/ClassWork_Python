@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <title>Django сайт</title>
+    <title>Home</title>
 </head>
-
 <body>
+
     <header>
         <nav class="bg-slate-900 px-6 py-4 flex items-center justify-between">
             <!-- Лого -->
@@ -21,34 +20,64 @@
 
             <!-- Навігаційні посилання -->
             <div class="hidden md:flex items-center gap-1">
-                <a href="/"
-                    class="text-slate-400 hover:text-white hover:bg-slate-800  px-4 py-2 rounded-md text-sm transition-colors">
+                <a href="/" class="text-slate-400 hover:text-white hover:bg-slate-800  px-4 py-2 rounded-md text-sm transition-colors">
                     Головна
                 </a>
-                <a href="#"
-                    class="text-slate-400 hover:text-white hover:bg-slate-800 px-4 py-2 rounded-md text-sm transition-colors">
+                <a href="#" class="text-slate-400 hover:text-white hover:bg-slate-800 px-4 py-2 rounded-md text-sm transition-colors">
                     Про нас
                 </a>
-                <a href="#"
-                    class="text-slate-400 hover:text-white hover:bg-slate-800 px-4 py-2 rounded-md text-sm transition-colors">
+                <a href="#" class="text-slate-400 hover:text-white hover:bg-slate-800 px-4 py-2 rounded-md text-sm transition-colors">
                     Послуги
                 </a>
-                <a href="#"
-                    class="text-slate-400 hover:text-white hover:bg-slate-800 px-4 py-2 rounded-md text-sm transition-colors">
+                <a href="#" class="text-slate-400 hover:text-white hover:bg-slate-800 px-4 py-2 rounded-md text-sm transition-colors">
                     Контакти
                 </a>
             </div>
 
-            <!-- CTA кнопки -->
-            <div class="flex items-center gap-2">
-                <a href="/users/login/"
-                    class="border border-indigo-500 hover:bg-indigo-500/10 text-indigo-400 hover:text-indigo-300 px-5 py-2 rounded-lg text-sm font-medium transition-colors">
-                    Вхід
-                </a>
-                <a href="/users/register/"
+            <div>
+                {% if request.user.is_authenticated %}
+
+                <div class="flex items-center gap-3 text-white">
+
+                    {% if request.user.image_small %}
+                        <img src="images/small/{{ request.user.image_small }}"
+                            class="w-9 h-9 rounded-full object-cover border border-slate-600">
+                    {% else %}
+                        <div class="w-9 h-9 rounded-full bg-slate-700 flex items-center justify-center text-sm">
+                            {{ request.user.username|first|upper }}
+                        </div>
+                    {% endif %}
+
+                    <a href="/users/profile"
                     class="bg-indigo-500 hover:bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors">
-                    Реєстрація
-                </a>
+                        {{ request.user.first_name|default:request.user.username }}
+                    </a>
+
+                    <a href="/users/logout"
+                    class="border border-indigo-500 hover:bg-indigo-500/10 text-indigo-400 hover:text-indigo-300 px-5 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Вийти
+                    </a>
+
+                </div>
+
+                {% else %}
+
+                <!-- CTA кнопка -->
+                <div class="flex items-center gap-2">
+                    <a href="/users/login"
+                    class="border border-indigo-500 hover:bg-indigo-500/10 text-indigo-400 hover:text-indigo-300 px-5 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Вхід
+                    </a>
+
+                    <span class="mx-2 text-slate-400">|</span>
+
+                    <a href="/users/register"
+                    class="bg-indigo-500 hover:bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Регістрація
+                    </a>
+                </div>
+
+                {% endif %}
             </div>
 
             <!-- Мобільне меню (бургер) -->
@@ -58,11 +87,11 @@
 
         </nav>
     </header>
+
     <main>
         {% block content %}
         {% endblock %}
     </main>
 
 </body>
-
 </html>
