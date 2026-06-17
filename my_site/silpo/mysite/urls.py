@@ -23,6 +23,7 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include("users.urls")),
+    path('categories/', include("categories.urls")),
     path('', views.homepage, name="homepage")
 ]
 urlpatterns += static(settings.IMAGES_URL, document_root=settings.IMAGES_ROOT)

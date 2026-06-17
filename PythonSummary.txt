@@ -712,6 +712,50 @@ form.cleaned_data -- бере дані з form.py
 ---------------------------------------------- 	
 08_CRUD categories
 
+https://github.com/novakvova/Python-PD411/commits/
+
+#silpo\categories\views.py
+    from django.shortcuts import render
+    
+    from categories.models import Category
+    
+    def category_list(request):
+        categories = Category.objects.all().order_by('name')
+                         запит         яка сторінка                 які данні передавати на html
+        return render(request, 'categories/category_list.html', {'categories': categories} )
+    
+#
+створ html у папці templates
+#silpo\categories\templates\category_list.html
+     {% if categories %}
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-4">
+#
+
+slugify --  кастомні url
+
+#silpo\categories\views.py
+    def category_create(request):
+        if request.method == 'POST':
+            form = CategoryForm(request.POST)
+            if form.is_valid():
+                try:
+                    category = form.save(commit=False)
+                    if not category.slug:
+                        category.slug = slugify(category.name, allow_unicode=False)
+                except Exception as e:
+                    messages.error(request, 'Category error', {str(e)})
+            else:
+                messages.error(request, "Corret errors in Form")
+        else:
+            form = CategoryForm()
+        return render(request, 'categories/category_create.html', {'form':form} ) 
+
+#
+silpo\categories\templates\categories\category_list.html
+ саме за цим шляхом category_list.html
+
+---------------------------------------------- 	
+09_
 
 
 
