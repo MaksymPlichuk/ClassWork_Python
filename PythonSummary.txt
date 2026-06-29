@@ -905,4 +905,44 @@ SPECTACULAR_SETTINGS = {
 }
  
 ---------------------------------------------- 	
-12_Django rest API
+12_Django React TS Tailwind
+
+
+atbapi\atbapi\urls.py
+
+```
+    from django.contrib import admin
+    from django.urls import path
+    from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
+    
+    urlpatterns = [
+        path('admin/', admin.site.urls),
+        path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+        path('swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+        path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    ]   
+```
+
+для зручності створ сериалізацію яка перетворюватиме юзерам
+    serializers.py
+
+для перетворення jwt
+    pip install djangorestframework_simplejwt
+
+atbapi\atbapi\settings.py
+    REST_FRAMEWORK = {
+        'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+            'rest_framework_simplejwt.authentication.JWTAuthentication',
+        ),
+    }
+
+
+atbapi\users\views.py -- методи контролера де буде вхід
+
+atbapi\users\serializers.py
+    serializer_class = UserSerializer -- клас по якому можна буде дістати всіх юзерів (аналог json)
+
+
+
