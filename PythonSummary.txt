@@ -824,5 +824,85 @@ silpo\categories\templates\categories\category_list.html
 ---------------------------------------------- 	
 09_
 
+---------------------------------------------- 	
+11_Django rest API
 
+створ окрему папку api у корені проекту
+ і в ній README.md
 
+#
+    py --version
+    py -m venv .venv
+    .venv\Scripts\activate.bat
+    python.exe -m pip install --upgrade pip
+    py -m pip install django
+    pip freeze > requirements.txt
+    python -m django --version
+    django-admin startproject atbapi
+    cd atbapi
+    py manage.py runserver 4099
+#
+створиться папка atbapi з проєетом
+
+py manage.py startapp users     --створ папку для роботи з юзерами
+
+atbapi\users\models.py
+    клас CustomUser
+    
+atbapi\atbapi\settings.py
+#
+  INSTALLED_APPS = [
+      'django.contrib.admin',
+      'django.contrib.auth',
+      'django.contrib.contenttypes',
+      'django.contrib.sessions',
+      'django.contrib.messages',
+      'django.contrib.staticfiles',
+      'users'       --показуємо що є папка з юзерами
+  ]
+
+і налаштов БД
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'HOST': '',
+            'NAME': '',
+            'USER': '',
+            'PASSWORD': '',
+            'PORT': '5432'
+        }
+    }
+додад
+    AUTH_USER_MODEL = 'users.CustomUser'
+#
+ виконуємо команди для ## Add CustomUser
+
+для SWAGGER
+    команди з : https://www.django-rest-framework.org/tutorial/quickstart/#__tabbed_1_2
+
+  pip install djangorestframework  --для робити API
+  pip install drf-spectacular         --swagger
+  pip install django-cors-headers     --CORS для запитів
+
+і підключаємо їх у atbapi\atbapi\settings.py
+
+INSTALLED_APPS = [
+...
+    'users'
+    'rest_framework',
+    'drf_spectacular',
+    'corsheaders',
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'DjangoApi',
+    'DESCRIPTION': 'Django REST API',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
+ 
+---------------------------------------------- 	
+12_Django rest API
