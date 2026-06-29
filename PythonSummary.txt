@@ -944,5 +944,61 @@ atbapi\users\views.py -- методи контролера де буде вхі�
 atbapi\users\serializers.py
     serializer_class = UserSerializer -- клас по якому можна буде дістати всіх юзерів (аналог json)
 
+-------
+react ts
 
+
+npm create vite@latest
+
+https://tailwindcss.com/docs/installation/using-vite
+
+  api/vite-django/src/index.css
+     @import "tailwindcss";   -- tailwind
+     @custom-variant dark (&:where(.dark, .dark *));  -- темна тема динамічна 
+     
+main.tsx
+    document.documentElement.classList.add("dark");
+    
+    
+ МАРШРУТИЗАЦІЯ
+    npm i react-router
+
+https://reactrouter.com/start/declarative/installation
+    
+app.tsx
+#
+    return (
+            <>
+                <Routes>
+                    <Route path="/" element={<RootLayout/>}>
+                        <Route index element={<HomePage/>} />
+                        <Route path={"login"} element={<LoginPage/>}></Route>
+                    </Route>
+                </Routes>
+            </>
+        )    
+src/layouts/RootLayout.tsx
+  
+    import {useState, useEffect} from "react";
+    import {Outlet, Link} from "react-router";
+    
+    const RootLayout = () => {
+        return (
+            <div>
+                <Link to="/login">
+                    <button>
+                    </button>
+                </Link>
+                    
+                <main className="pt-28">
+                    <Outlet/>
+                </main>
+            </div>
+        );
+    };
+    export default RootLayout;    
+#   
+
+---------------------------------------------- 	
+13_Django React TS Tailwind
 
