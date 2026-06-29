@@ -142,9 +142,9 @@ DJANGORESIZED_DEFAULT_NORMALIZE_ROTATION = True
 # SMTP
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'                 # Replace with your SMTP server
-EMAIL_PORT = 587                              # Use 587 for TLS
-EMAIL_USE_TLS = True                          # Secure connection TLS
-EMAIL_HOST_USER = 'your_email@example.com'    # Your email username
-EMAIL_HOST_PASSWORD = 'your_app_password'     # Your email app-specific password
+EMAIL_HOST = 'smtp.ukr.net'
+EMAIL_PORT = 2525
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'enter'
+EMAIL_HOST_PASSWORD = 'enter'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

@@ -708,6 +708,73 @@ form.cleaned_data -- бере дані з form.py
 ---------------------------------------------- 	
 07_PasswordRecovery
 
+######
+https://github.com/novakvova/Python-PD411/commit/5f632cea5fff4e261761ecb6bd3ebb878b001623#diff-034fef3538ef37620cdf616214e57da54fd36e6bbb46b291eb26a727e48fd037
+
+Проект ділиться на папки 
+
+Directory structure:
+└── my_site/
+    ├── README.md
+    ├── requirements.txt    -- пакети для установки за README
+    └── silpo/
+        ├── categories/        -- папка для сторінки категорії
+        ├── images/         --сховище картинок 
+        ├── mysite/         -- як main/program.cs ГОЛОВНА СТОРІНКА для всього проєкту
+        ├── templates/
+        │   ├── home.html
+        │   └── layout.html
+        └── users/          -- папка для ф-ції з юзерами СТОРІНКИ з юзероам
+
+#####
+
+для SMTP
+    у silpo\mysite\settings.py
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.ukr.net'
+EMAIL_PORT = 2525
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'super.novakvova@ukr.net'
+EMAIL_HOST_PASSWORD = '9J8nMfl6V0KjsowM'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+також у silpo\users\templates додаємо відповідні html
+
+     password_reset.html
+     password_reset_complete.html
+     password_reset_confirm.html
+     password_reset_done.html
+     password_reset_email.html
+
+mysite/silpo/users/forms.py -- додати ф-ції зміни
+#
+    from django.contrib.auth.tokens import default_token_generator
+    from django.utils.http import urlsafe_base64_encode
+    from django.utils.encoding import force_bytes
+    from django.core.mail import send_mail
+    from django.template.loader import render_to_string
+    from django.contrib.auth.forms import SetPasswordForm
+
+    class CustomPasswordResetForm(forms.Form):
+            ...
+    class CustomSetPasswordForm(SetPasswordForm):
+            ...
+#
+
+mysite/silpo/users/urls.py      --додаємо маршрути
+
+  urlpatterns = [
+      ....
+      path('password-reset/', views.password_reset_request, name='password_reset')
+      path('password-reset/done/', views.password_reset_done, name='password_reset_done'),
+      path('reset/<uidb64>/<token>/', views.password_reset_confirm, name='password_reset_confirm'),
+      path('reset/done/', views.password_reset_complete, name='password_reset_complete'),
+  ]
+
+і зімнюємо саму логіку у silpo\users\views.py
+
+
 
 ---------------------------------------------- 	
 08_CRUD categories
