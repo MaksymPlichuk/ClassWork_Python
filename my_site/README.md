@@ -47,3 +47,13 @@ py manage.py startapp categories
 py manage.py makemigrations categories
 py manage.py migrate
 ```
+
+## Working products Django
+```
+cd silpo
+py manage.py startapp products
+py manage.py makemigrations products
+py manage.py migrate
+py manage.py makemigrations products
+py manage.py migrate
+```
