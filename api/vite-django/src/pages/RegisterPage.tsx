@@ -19,7 +19,7 @@ const EyeIcon = ({open}: { open: boolean }) => open ? (
     </svg>
 );
 
-const LoginPage = () => {
+const RegisterPage = () => {
     const [showPass, setShowPass] = useState(false);
     const [loading] = useState(false);
 
@@ -32,6 +32,7 @@ const LoginPage = () => {
             .max(100, {message: "Пароль занадто довгий"}),
     });
 
+    //react-hook-form
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -91,10 +92,10 @@ const LoginPage = () => {
                 ">
                     <div className="mb-7">
                         <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50 tracking-tight mb-1">
-                            Вхід до акаунту
+                            Регістрація акаунту
                         </h1>
                         <p className="text-sm text-slate-500 dark:text-slate-400">
-                            Вітаємо назад, козаче 👋
+                            Вітаємо, козаче 👋
                         </p>
                     </div>
 
@@ -235,7 +236,7 @@ const LoginPage = () => {
                                     </svg>
                                     Вхід…
                                 </>
-                            ) : "Увійти"}
+                            ) : "Зареєструватись"}
                         </button>
                     </form>
 
@@ -275,9 +276,9 @@ const LoginPage = () => {
 
                 {/* Register link */}
                 <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-6">
-                    Ще немає акаунту?{" "}
-                    <Link to="/register" className="text-indigo-500 dark:text-indigo-400 font-medium hover:underline">
-                        Зареєструватись
+                    Маєте акаунт?{" "}
+                    <Link to="/login" className="text-indigo-500 dark:text-indigo-400 font-medium hover:underline">
+                        Увійти
                     </Link>
                 </p>
             </div>
@@ -285,4 +286,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default RegisterPage;
