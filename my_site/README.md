@@ -57,3 +57,14 @@ py manage.py migrate
 py manage.py makemigrations products
 py manage.py migrate
 ```
+
+## Seed data Django
+```
+pip install requests
+ 
+pip freeze > requirements.txt
+
+python manage.py seed_data
+
+python manage.py seed_data
+```

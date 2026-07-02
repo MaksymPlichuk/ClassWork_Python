@@ -51,8 +51,8 @@
                   {% csrf_token %}
                   <button type="submit" class="w-full inline-flex items-center justify-center rounded-lg bg-rose-600 hover:bg-rose-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition">Видалити</button>
                 </form>
+                <a class="inline-flex items-center justify-center rounded-lg bg-emerald-600 hover:bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition" href="{% url 'categories:edit' cat.id %}">Редагувати</a>
               </div>
-              <a class="inline-flex items-center justify-center rounded-lg bg-emerald-600 hover:bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition" href="{% url 'categories:edit' cat.id %}">Редагувати</a>
               
             </div>
           </div>
