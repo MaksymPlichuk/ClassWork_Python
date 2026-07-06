@@ -3,6 +3,7 @@ import random
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import CustomUser
 from .serializers import LoginSerializer, UserSerializer, RegisterSerializer
@@ -50,42 +51,38 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     @action(detail=False, methods=['post'], url_path='login', serializer_class=LoginSerializer)
     def login(self, request):
         serializer = LoginSerializer(data=request.data)
-        if serializer.is_valid():
-            username = serializer.validated_data['username']
-            password = serializer.validated_data['password']
-            user = CustomUser.objects.filter(username=username)
-            user = user.first()
-            if not user:
-                return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-        #jwt to do
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        #валідуємо дані з форми з нашим DTO     
+        username = serializer.validated_data['username']
+        password = serializer.validated_data['password']
+        
+        user = CustomUser.objects.filter(username=username).first()
+        if not user or not user.check_password(password):
+            return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)   
+        
+        #вбудова ф-цыя
+        refresh = RefreshToken.for_user(user)
+        return Response ({
+            "user": UserSerializer(user).data,
+            "refresh": str(refresh),
+            "access": str(refresh.access_token)
+        }, status=status.HTTP_200_OK)
+        
 
     @action(detail=False, methods=['post'], url_path='register', serializer_class=RegisterSerializer)
     def register(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
-            #валідуємо дані з форми з нашим DTO
-            username = serializer.validated_data['username']
-            password = serializer.validated_data['password']
-            first_name = serializer.validated_data['first_name']
-            last_name = serializer.validated_data['last_name']
-            email = serializer.validated_data['email']
-
-            # Перевіряємо, чи юзер існує
-            if CustomUser.objects.filter(username=username).exists():
-                return Response({"detail": "Username taken"}, status=status.HTTP_400_BAD_REQUEST)
-            
-            user = CustomUser.objects.create(
-                username=username,
-                password=password,
-                first_name=first_name,
-                last_name=last_name,
-                email=email
-            )
-
-            return Response(
-                UserSerializer(user).data,
-                status=status.HTTP_201_CREATED
-            )
+            #Викликає RegisterSerializer.create() [перевизначений нами метод у serializers.py]
+            user = serializer.save()
+            #З rest_framework_simplejwt — генерує пару токенів (refresh + access), "прив'язаних" до конкретного юзера
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                "user": UserSerializer(user).data,
+                "refresh": str(refresh),
+                "access": str(refresh.access_token)
+            }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            

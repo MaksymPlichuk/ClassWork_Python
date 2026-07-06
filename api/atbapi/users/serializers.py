@@ -29,6 +29,12 @@ class RegisterSerializer(serializers.ModelSerializer):
             'last_name',
             'email'
         ]
+    #перевизначаємо метод    
+    def create(self, validated_data): 
+        # create_user сам викликає set_password() і хешує пароль (PBKDF2/argon2 залежно від settings)
+                                    #**validated_data - розпакування цього словника 'username': 'user1234' --> username='user1234'
+        user=CustomUser.objects.create_user(**validated_data)
+        return user    
 
 #вихідний DTO для представлення користувача (без пароля взагалі).
 class UserSerializer(serializers.ModelSerializer):
