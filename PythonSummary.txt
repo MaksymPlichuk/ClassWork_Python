@@ -1000,6 +1000,7 @@ silpo\urls.py
     }
 </script>
            
+----------------------------------------------
 ---------------------------------------------- 	
 11_Django rest API
 
@@ -1080,13 +1081,14 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
 }
  
+ 
 ---------------------------------------------- 	
 12_Django React TS Tailwind
 
-
+https://drf-spectacular.readthedocs.io/en/latest/readme.html
 atbapi\atbapi\urls.py
 
-```
+```                                         #щоб працювало посилання /swagger
     from django.contrib import admin
     from django.urls import path
     from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
@@ -1099,8 +1101,9 @@ atbapi\atbapi\urls.py
     ]   
 ```
 
+https://www.django-rest-framework.org/tutorial/1-serialization/#creating-a-model-to-work-with
 для зручності створ сериалізацію яка перетворюватиме юзерам
-    serializers.py
+    serializers.py  --даватиме відповіль у JSON
 
 для перетворення jwt
     pip install djangorestframework_simplejwt
@@ -1119,6 +1122,21 @@ atbapi\users\views.py -- методи контролера де буде вхі�
 
 atbapi\users\serializers.py
     serializer_class = UserSerializer -- клас по якому можна буде дістати всіх юзерів (аналог json)
+
+Як працює реєстрація через Swagger
+1Структура роботи
+Користувач → Swagger UI (/swagger/) 
+  ↓
+POST /api/users/register/ 
+  ↓
+Django ViewSet.register() 
+  ↓
+RegisterSerializer.validate() 
+  ↓
+CustomUser.create() 
+  ↓
+JSON Response
+
 
 -------
 react ts

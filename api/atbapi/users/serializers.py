@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import CustomUser
 
+#вхідний DTO для логіну. write_only=True означає, що поле приймається на вхід, але ніколи не серіалізується назад у відповідь (тобто пароль не потрапить у JSON-відповідь).
 class LoginSerializer(serializers.ModelSerializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
@@ -12,6 +13,24 @@ class LoginSerializer(serializers.ModelSerializer):
             'password',
         ]
 
+class RegisterSerializer(serializers.ModelSerializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    email = serializers.EmailField()
+    
+    class Meta:
+        model = CustomUser
+        fields = [
+            'username',
+            'password',
+            'first_name',
+            'last_name',
+            'email'
+        ]
+
+#вихідний DTO для представлення користувача (без пароля взагалі).
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser

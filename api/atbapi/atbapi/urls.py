@@ -20,7 +20,11 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, Sp
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
+    #сканує всі ViewSet'и, серіалізатори, роутери й генерує openapi.yaml/JSON схему автоматично (аналог того, що Swashbuckle робить в ASP.NET, читаючи атрибути контролерів
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+
+    #бере цю схему і рендерить інтерактивний UI (Swagger UI), де можна тестувати ендпоінти прямо з браузера.
     path('swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('api/', include('users.urls'))
