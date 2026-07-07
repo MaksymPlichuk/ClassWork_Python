@@ -16,19 +16,24 @@ class LoginSerializer(serializers.ModelSerializer):
 class RegisterSerializer(serializers.ModelSerializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
     first_name = serializers.CharField()
     last_name = serializers.CharField()
     email = serializers.EmailField()
-    
+    image = serializers.FileField(write_only=True)
+
     class Meta:
         model = CustomUser
         fields = [
             'username',
             'password',
+            'confirm_password'
             'first_name',
             'last_name',
-            'email'
+            'email',
+            'image'
         ]
+
     #перевизначаємо метод    
     def create(self, validated_data): 
         # create_user сам викликає set_password() і хешує пароль (PBKDF2/argon2 залежно від settings)

@@ -4,6 +4,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from .models import CustomUser
 from .serializers import LoginSerializer, UserSerializer, RegisterSerializer
@@ -36,10 +37,12 @@ def generate_random_users(n=5):
 
     return created_users
 
+
 # ViewSet=controller ReadOnlyModelViewSet — дає тільки GET (list/retrieve), без create/update/delete. Це одразу і Controller, і частина роутингу (DRF роутер сам генерує /users/, /users/{id}/ з цього класу).
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+    parser_classes=[MultiPartParser, FormParser] #змінюємо форму
 
 #@action(...) — це кастомні ендпоінти поверх стандартного CRUD, як окремі [HttpPost("login")] методи в ASP.NET контролері:
     @action(detail=False, methods=['post'])
@@ -74,15 +77,17 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     def register(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
-            #Викликає RegisterSerializer.create() [перевизначений нами метод у serializers.py]
-            user = serializer.save()
-            #З rest_framework_simplejwt — генерує пару токенів (refresh + access), "прив'язаних" до конкретного юзера
-            refresh = RefreshToken.for_user(user)
-            return Response({
-                "user": UserSerializer(user).data,
-                "refresh": str(refresh),
-                "access": str(refresh.access_token)
-            }, status=status.HTTP_201_CREATED)
+            if (serializer.validated_data["password"]==serializer.validated_data["confirm_password"]):
+                
+                #Викликає RegisterSerializer.create() [перевизначений нами метод у serializers.py]
+                user = serializer.save()
+                #З rest_framework_simplejwt — генерує пару токенів (refresh + access), "прив'язаних" до конкретного юзера
+                refresh = RefreshToken.for_user(user)
+                return Response({
+                    "user": UserSerializer(user).data,
+                    "refresh": str(refresh),
+                    "access": str(refresh.access_token)
+                }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             

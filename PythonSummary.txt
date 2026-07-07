@@ -1194,7 +1194,7 @@ src/layouts/RootLayout.tsx
 #   
 
 ---------------------------------------------- 	
-13_Forms React TS Tailwind
+13_Forms ZOD react-hook-form
 
 бібліотека для форм
 	react-hook-form		--форми
@@ -1308,4 +1308,23 @@ export function FormInput<T extends FieldValues>({
 
 ---------------------------------------------- 	
 14_
+
+
+---------------------------------------------- 	
+15_
+
+settings.py
+    SPECTACULAR_SETTINGS = {
+    'TITLE': 'DjangoApi',
+    'DESCRIPTION': 'Django REST API',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True, #додаємо для файлів
+}
+
+users/views.py
+    class UserViewSet(viewsets.ReadOnlyModelViewSet):
+        queryset = CustomUser.objects.all()
+        serializer_class = UserSerializer
+        parser_classes=[MultiPartParser, FormParser] #змін форму
 
