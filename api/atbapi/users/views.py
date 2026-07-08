@@ -5,6 +5,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.parsers import MultiPartParser, FormParser
+#permissions
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .utils import save_custom_image
 
@@ -46,6 +48,18 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
     parser_classes=[MultiPartParser, FormParser] #змінюємо форму
 
+    def get_permissions(self):
+        if self.action in ['login', 'registration']:
+            permission_classes = [AllowAny]
+        elif self.action in ['list', 'retrieve']:
+            # тільки авторизовані користувачі можуть бачити список/деталі
+            permission_classes = [IsAuthenticated]
+            # або, якщо хочете взагалі заборонити GET списку всім:
+            # permission_classes = [IsAdminUser]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
+
 #@action(...) — це кастомні ендпоінти поверх стандартного CRUD, як окремі [HttpPost("login")] методи в ASP.NET контролері:
     @action(detail=False, methods=['post'])
     def generate(self, request):
@@ -59,10 +73,10 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         #валідуємо дані з форми з нашим DTO     
-        username = serializer.validated_data['username']
+        email = serializer.validated_data['email']
         password = serializer.validated_data['password']
         
-        user = CustomUser.objects.filter(username=username).first()
+        user = CustomUser.objects.filter(email=email).first()
         if not user or not user.check_password(password):
             return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)   
         

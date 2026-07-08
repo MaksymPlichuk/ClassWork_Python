@@ -4,10 +4,13 @@ import * as z from 'zod';
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {FormInput} from "../Components/FormInput.tsx";
+import {useLoginUserMutation} from "../services/usersApi.ts";
 
 
 const LoginPage = () => {
     const [loading] = useState(false);
+
+    const [login] = useLoginUserMutation();
 
     const formSchema = z.object({
         email: z
@@ -27,7 +30,15 @@ const LoginPage = () => {
     })
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
-        console.log("data", data);
+        try {
+            const response = await login(data).unwrap();
+
+            console.log(response)
+            //navigate('/')
+        }
+        catch (error) {
+            console.error(error)
+        }
     }
 
     return (

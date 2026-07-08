@@ -1405,7 +1405,7 @@ export const {
 
 
 ---------------------------------------------- 	
-15_
+15_UserProfile
 
 settings.py
     SPECTACULAR_SETTINGS = {
@@ -1421,4 +1421,73 @@ users/views.py
         queryset = CustomUser.objects.all()
         serializer_class = UserSerializer
         parser_classes=[MultiPartParser, FormParser] #змін форму
+
+---------------------------------------------- 	
+16_UserProfile
+
+
+ const onSubmit = async (data: z.infer<typeof formSchema>) => {
+        try {
+            const response = await login({
+                ...data,
+                username: data.email,
+                password: data.password
+            }).unwrap();
+
+            console.log(response)
+            navigate('/')
+        }
+        catch (error) {
+            console.error(error)
+        }
+    }
+	...user -- деструктуризація
+
+npm i object-to-formdata
+
+	import {serialize} from "object-to-formdata";		--щоб дані перетворити дату бо сервер приймає FormData з JSON (помилка 415)
+	
+	loginUser: builder.mutation<IUserResponse, IUserLogin>({
+				query: (userData) => {
+					const formdata = serialize(userData)
+					return {
+						url: '/login/',
+						method: 'POST',
+						body: formdata
+					}
+				}
+			})
+
+продовження життя токену settings.py
+#
+	from datetime import timedelta
+	
+	SIMPLE_JWT = {
+		"ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+		"REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+	}
+#
+
+#permissions
+	from rest_framework.permissions import AllowAny, IsAuthenticated
+	
+	def get_permissions(self):
+			if self.action in ['login', 'registration']:
+				permission_classes = [AllowAny]
+			elif self.action in ['list', 'retrieve']:
+				# тільки авторизовані користувачі можуть бачити список/деталі
+				permission_classes = [IsAuthenticated]
+				# або, якщо хочете взагалі заборонити GET списку всім:
+				# permission_classes = [IsAdminUser]
+			else:
+				permission_classes = [IsAuthenticated]
+			return [permission() for permission in permission_classes]
+---
+
+
+
+
+
+
+
 
