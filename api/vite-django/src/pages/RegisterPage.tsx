@@ -6,11 +6,14 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {FormInput} from "../Components/FormInput.tsx";
 import type {File} from "zod/v4/core";
 import {ImageFormInput} from "../Components/ImageFormInput.tsx";
-
+import {useRegisterUserMutation} from "../services/usersApi.ts";
+import type {IUserRegistration} from "../types/users/IUserRegistration.ts";
 
 const RegisterPage = () => {
 
     const [loading] = useState(false);
+    //деструктуризуэмо масив і дістаємо registration
+    const [registration] = useRegisterUserMutation()
 
     const formSchema = z.object({
         email: z
@@ -39,8 +42,31 @@ const RegisterPage = () => {
         }
     })
 
-    const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    const onSubmit = async (data: z.infer<typeof formSchema>, event?: React.BaseSyntheticEvent) => {
         console.log("data", data);
+        event?.preventDefault();
+        try {
+            const formData = new FormData();
+            formData.append("username", data.username);
+            formData.append("password", data.password);
+            formData.append("email", data.email);
+            if (data.first_name) {
+                formData.append("first_name", data.first_name)
+            }
+            if (data.last_name) {
+                formData.append("last_name", data.last_name)
+            }
+            formData.append("confirm_password", data.confirm_password)
+            formData.append("image", data.image)
+                                                        //as unknown as — це подвійне приведення типів, "obхідний шлях": спочатку типізуємо значення як unknown (що сумісне з будь-чим), а потім вже "вниз" до IUserRegistration. Це фактично каже компілятору: "довірся мені, не перевіряй".
+            const resp = await registration(formData as unknown as IUserRegistration).unwrap();
+                                                                                                //unwrap якщо запит успішний → повертається сам data якщо запит впав (4xx/5xx) → кидається exception, який ти ловиш у своєму catch
+            console.log("resp", resp);
+
+        } catch (error) {
+            console.error(error);
+        }
+
     }
 
     return (

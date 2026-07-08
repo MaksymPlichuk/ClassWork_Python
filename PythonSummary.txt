@@ -1309,6 +1309,100 @@ export function FormInput<T extends FieldValues>({
 ---------------------------------------------- 	
 14_
 
+settings.py налаштування CORS
+
+    ALLOWED_HOSTS = ['*']
+    
+    MIDDLEWARE = [
+        'corsheaders.middleware.CorsMiddleware',
+        ...]
+    
+    CORS_ALLOW_ALL_ORIGINS=True
+    
+--
+Для TypeScript треба типи тому у vite-django/src
+
+    types/users/IUserItem
+        export interface IUserItem {
+            id: string,
+            username: string....
+        }
+
+AXIOS
+
+const [users, setUsers] = useState<IUserItem[]>([]) #прийматимемо у users по дефолту пустий масив []
+    axios.get<IUserItem[]>("http://127.0.0.1:4099/api/users")
+             .then( (resp) => {
+                    const {data} = resp;
+                    setUsers(data);            #Зберігаю дані у State
+             })
+
+RTK Query
+https://redux-toolkit.js.org/tutorials/rtk-query
+
+    npm install @reduxjs/toolkit
+    npm install react-redux
+    
+Налаштування у src папка .env.development ( VITE_API_URL = http://127.0.0.1:4099 )
+#src/env/index.ts
+    const API_URL = import.meta.env.VITE_API_URL;
+    
+    const APP_ENV = {
+        API_URL
+    }
+    
+    export default APP_ENV;
+#
+
+utils/CreateBaseQuery.ts
+services/usersApi.ts
+store/index.ts
+https://github.com/novakvova/Python-PD411/commit/7e622f2dff4cb792e6e06d50ffa3b501d26e990f
+
+
+ const {data: myUsers, isLoading, isError} = useGetUsersQuery();
+    дістаємо data і називаємо її myUsers
+
+
+-------
+🟧Щоб створити POST RTK Запит на TypeScript
+
+у Types створюємо типи які прийматимемо і повертатимемо
+
+export interface IUserItem {
+    username: string,
+    first_name: string,
+    last_name: string,
+    email: string,
+    password: string,
+    confirm_password: string,
+    image: File,
+}
+export interface IUserResponse {
+    user: object,
+    refresh: string,
+    access: string,
+}
+
+
+                                        //приймає           //повертає
+        registerUser: builder.mutation<IUserResponse, IUserRegistration>({
+            //віддає
+            query: (userData) => {
+                return {
+                    url: '/registration/',
+                    method: 'POST',
+                    body: userData
+                }
+            }
+        }),
+
+export const {
+    useGetUsersQuery,
+    useRegisterUserMutation,
+} = usersApi;
+
+
 
 ---------------------------------------------- 	
 15_

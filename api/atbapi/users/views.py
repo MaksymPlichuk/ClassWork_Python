@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.parsers import MultiPartParser, FormParser
 
+from .utils import save_custom_image
+
 from .models import CustomUser
 from .serializers import LoginSerializer, UserSerializer, RegisterSerializer
 
@@ -79,15 +81,37 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         if serializer.is_valid():
             if (serializer.validated_data["password"]==serializer.validated_data["confirm_password"]):
                 
+                user = CustomUser.objects.create_user(
+                    username = serializer.validated_data["username"],
+
+                    # якщо serializer.validated_data['email'] то при пустому полі буде помилка
+                    email = serializer.validated_data.get('email', ''),
+                    first_name = serializer.validated_data.get('first_name', ''),
+                    last_name = serializer.validated_data.get('last_name', ''),
+                    password = serializer.validated_data["password"],
+                )
+
+
                 #Викликає RegisterSerializer.create() [перевизначений нами метод у serializers.py]
-                user = serializer.save()
+                #user = serializer.save() --непрацює з картинками
+
+                uploaded_image = serializer.validated_data["image"]
+                if uploaded_image:
+                    user.image_small=save_custom_image(uploaded_image, size=(300,300), folder="small")
+                    user.image_medium=save_custom_image(uploaded_image, size=(800,800), folder="medium")
+                    user.image_large=save_custom_image(uploaded_image, size=(1200,1200), folder="large")
+
+                user.save() #для збереження картинок
+                
                 #З rest_framework_simplejwt — генерує пару токенів (refresh + access), "прив'язаних" до конкретного юзера
                 refresh = RefreshToken.for_user(user)
+
                 return Response({
                     "user": UserSerializer(user).data,
                     "refresh": str(refresh),
                     "access": str(refresh.access_token)
                 }, status=status.HTTP_201_CREATED)
+            return Response("Паролі не збігаються", staus=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             
