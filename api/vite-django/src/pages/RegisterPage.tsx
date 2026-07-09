@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Link} from "react-router";
+import {Link, useNavigate} from "react-router";
 import * as z from 'zod';
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -11,7 +11,9 @@ import type {IUserRegistration} from "../types/users/IUserRegistration.ts";
 
 const RegisterPage = () => {
 
+    const navigate = useNavigate();
     const [loading] = useState(false);
+
     //деструктуризуэмо масив і дістаємо registration
     const [registration] = useRegisterUserMutation()
 
@@ -60,9 +62,9 @@ const RegisterPage = () => {
             formData.append("image", data.image)
                                                         //as unknown as — це подвійне приведення типів, "obхідний шлях": спочатку типізуємо значення як unknown (що сумісне з будь-чим), а потім вже "вниз" до IUserRegistration. Це фактично каже компілятору: "довірся мені, не перевіряй".
             const resp = await registration(formData as unknown as IUserRegistration).unwrap();
-                                                                                                //unwrap якщо запит успішний → повертається сам data якщо запит впав (4xx/5xx) → кидається exception, який ти ловиш у своєму catch
+                                                                  //unwrap якщо запит успішний → повертається сам data якщо запит впав (4xx/5xx) → кидається exception, який ти ловиш у своєму catch
             console.log("resp", resp);
-
+            navigate("/login");
         } catch (error) {
             console.error(error);
         }

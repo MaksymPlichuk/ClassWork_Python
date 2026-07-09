@@ -18,6 +18,10 @@ from django.contrib import admin
 from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
+#для картинок на фронті
+from django.conf import settings
+from django.conf.urls.static import static
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     
@@ -29,3 +33,7 @@ urlpatterns = [
     path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('api/', include('users.urls'))
 ]
+
+#якщо DEBUG=False Тоді Django не повинен віддавати статичні чи медіафайли. Цим займається Nginx, Apache або інший вебсервер.
+if settings.DEBUG:
+    urlpatterns += static(settings.IMAGES_URL, document_root=settings.IMAGES_ROOT)

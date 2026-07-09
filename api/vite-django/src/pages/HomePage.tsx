@@ -2,8 +2,7 @@
 // import axios from "axios";
 // import type {IUserItem} from "../types/users/IUserItem.ts";
 import {useGetUsersQuery} from "../services/usersApi.ts";
-import {useEffect} from "react";
-import {isTokenExpired} from "../utils/jwt.ts";
+
 
 const HomePage = () => {
     // const [isError, setUsers] = useState<IUserItem[]>([]);

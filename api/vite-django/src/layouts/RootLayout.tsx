@@ -45,6 +45,8 @@ const RootLayout = () => {
     const isAuth = useAppSelector(selectIsAuth);
     const dispatch = useAppDispatch();
 
+    const user = useAppSelector(state => state.auth.user);
+
     useEffect(() => {
         if (!isAuth) {
             dispatch(logout())
@@ -60,6 +62,9 @@ const RootLayout = () => {
         }
     }, [dark]);
 
+                                                                                    //така адреса бо у State /uuid картинки
+    const avatarUrl = user?.image_large ? `http://127.0.0.1:4099/images/large/${user.image_large}` : `https://image-cdn.essentiallysports.com/wp-content/uploads/Ronnie-Coleman-6-524x460.jpg`
+    console.log('image_large raw value:', user?.image_large);
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
             {/* Header */}
@@ -131,7 +136,7 @@ const RootLayout = () => {
                             </button>
 
                             {/* CTA */}
-                            {isAuth ? (
+                            {!isAuth ? (
                                 <>
                                     <Link to="/login">
                                         <button className="
@@ -160,7 +165,8 @@ const RootLayout = () => {
                                 </>
                             ) : (
                                 <>
-                                    <button className="
+                                    <Link to="/register">
+                                        <button className="
                                 hidden md:flex items-center gap-2
                                 px-4 py-2 rounded-xl text-sm font-medium
                                 bg-gradient-to-r from-red-400 to-red-700 hover:shadow-indigo-500/30
@@ -168,11 +174,12 @@ const RootLayout = () => {
                                 hover:shadow-indigo-500/50 hover:scale-[1.02]
                                 transition-all duration-200
                             " onClick={() => dispatch(logout())}>
-                                        Вийти
-                                    </button>
+                                            Вийти
+                                        </button>
+                                    </Link>
                                     <Link to="/profile">
                                         <img
-                                            src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQODf9dzCvlCAyDwoTgEndKmC9vECmZtMKWwGpKoV8Gfg&s=10"}
+                                            src={avatarUrl} alt={"TEST"}
                                             className="h-full max-h-12 aspect-square rounded-full object-cover overflow-hidden"
                                         />
                                     </Link>

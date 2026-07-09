@@ -51,6 +51,11 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     def get_permissions(self):
         if self.action in ['login', 'register']:
             permission_classes = [AllowAny]
+     
+     #це вбудовані ф-ції але фактично за цим if цей рядок можна прибрати       
+        elif self.action in ['list', 'retrieve']:
+                 # тільки авторизовані користувачі можуть бачити список/деталі
+            permission_classes = [IsAuthenticated]
             # або, якщо хочете взагалі заборонити GET списку всім:
             # permission_classes = [IsAdminUser]
         else:

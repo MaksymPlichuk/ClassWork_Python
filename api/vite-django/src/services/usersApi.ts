@@ -5,6 +5,7 @@ import type {IUserResponse} from "../types/users/IUserResponse.ts";
 import type {IUserRegistration} from "../types/users/IUserRegistration.ts";
 import type {IUserLogin} from "../types/users/IUserLogin.ts";
 import {serialize} from "object-to-formdata";
+import type {AuthUser} from "../types/users/AuthUser.ts";
 
 export const usersApi = createApi({
     baseQuery: createBaseQuery('users'),
@@ -19,7 +20,7 @@ export const usersApi = createApi({
                     method: 'GET'
                 }
             }
-        }),                         //приймає           //повертає
+        }),                         //повертає           //приймає
         registerUser: builder.mutation<IUserResponse, IUserRegistration>({
             //віддає
             query: (userData) => {
@@ -40,6 +41,14 @@ export const usersApi = createApi({
                     body: formdata
                 }
             }
+        }),
+        getUser: builder.query<AuthUser, string>({
+            query: (id: string) => {
+                return {
+                    url: `/${id}/`,
+                    method: 'GET',
+                }
+            }
         })
     })
 });
@@ -48,4 +57,5 @@ export const {
     useGetUsersQuery,
     useRegisterUserMutation,
     useLoginUserMutation,
+    useGetUserQuery,
 } = usersApi;

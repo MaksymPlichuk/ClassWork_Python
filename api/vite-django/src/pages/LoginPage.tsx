@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Link} from "react-router";
+import {Link, useNavigate} from "react-router";
 import * as z from 'zod';
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -12,6 +12,7 @@ import type {AuthUser} from "../types/users/AuthUser.ts";
 
 const LoginPage = () => {
     const [loading] = useState(false);
+    const navigate = useNavigate();
 
     const [login] = useLoginUserMutation();
     const dispatch = useAppDispatch();
@@ -45,7 +46,7 @@ const LoginPage = () => {
             }))
 
             console.log(response)
-            //navigate('/')
+            navigate('/')
         }
         catch (error) {
             console.error(error)
