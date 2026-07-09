@@ -49,11 +49,8 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     parser_classes=[MultiPartParser, FormParser] #змінюємо форму
 
     def get_permissions(self):
-        if self.action in ['login', 'registration']:
+        if self.action in ['login', 'register']:
             permission_classes = [AllowAny]
-        elif self.action in ['list', 'retrieve']:
-            # тільки авторизовані користувачі можуть бачити список/деталі
-            permission_classes = [IsAuthenticated]
             # або, якщо хочете взагалі заборонити GET списку всім:
             # permission_classes = [IsAdminUser]
         else:

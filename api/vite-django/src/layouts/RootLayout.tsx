@@ -1,5 +1,7 @@
 import {useState, useEffect} from "react";
 import {Outlet, Link, useLocation} from "react-router";
+import {useAppDispatch, useAppSelector} from "../store";
+import {logout, selectIsAuth} from "../store/authSlice.ts";
 
 const NAV_LINKS = [
     {label: "Головна", to: "/"},
@@ -40,7 +42,14 @@ const RootLayout = () => {
 
     const location = useLocation();
 
+    const isAuth = useAppSelector(selectIsAuth);
+    const dispatch = useAppDispatch();
+
     useEffect(() => {
+        if (!isAuth) {
+            dispatch(logout())
+        }//щоб видаляти токени які не працюють
+
         const root = document.documentElement;
         if (dark) {
             root.classList.add("dark");
@@ -122,8 +131,10 @@ const RootLayout = () => {
                             </button>
 
                             {/* CTA */}
-                            <Link to="/login">
-                                <button className="
+                            {isAuth ? (
+                                <>
+                                    <Link to="/login">
+                                        <button className="
                                 hidden md:flex items-center gap-2
                                 px-4 py-2 rounded-xl text-sm font-medium
                                 bg-gradient-to-r from-indigo-500 to-violet-600
@@ -131,11 +142,11 @@ const RootLayout = () => {
                                 hover:shadow-indigo-500/50 hover:scale-[1.02]
                                 transition-all duration-200
                             ">
-                                    Увійти
-                                </button>
-                            </Link>
-                            <Link to="/register">
-                                <button className="
+                                            Увійти
+                                        </button>
+                                    </Link>
+                                    <Link to="/register">
+                                        <button className="
                                 hidden md:flex items-center gap-2
                                 px-4 py-2 rounded-xl text-sm font-medium
                                 bg-gradient-to-r from-violet-600 to-indigo-500
@@ -143,9 +154,31 @@ const RootLayout = () => {
                                 hover:shadow-indigo-500/50 hover:scale-[1.02]
                                 transition-all duration-200
                             ">
-                                    Регістрація
-                                </button>
-                            </Link>
+                                            Регістрація
+                                        </button>
+                                    </Link>
+                                </>
+                            ) : (
+                                <>
+                                    <button className="
+                                hidden md:flex items-center gap-2
+                                px-4 py-2 rounded-xl text-sm font-medium
+                                bg-gradient-to-r from-red-400 to-red-700 hover:shadow-indigo-500/30
+                                text-white shadow-md shadow-indigo-500/30
+                                hover:shadow-indigo-500/50 hover:scale-[1.02]
+                                transition-all duration-200
+                            " onClick={() => dispatch(logout())}>
+                                        Вийти
+                                    </button>
+                                    <Link to="/profile">
+                                        <img
+                                            src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQODf9dzCvlCAyDwoTgEndKmC9vECmZtMKWwGpKoV8Gfg&s=10"}
+                                            className="h-full max-h-12 aspect-square rounded-full object-cover overflow-hidden"
+                                        />
+                                    </Link>
+                                </>
+                            )}
+
                         </div>
                     </div>
                 </div>

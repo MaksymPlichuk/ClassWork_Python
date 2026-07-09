@@ -2,6 +2,8 @@
 // import axios from "axios";
 // import type {IUserItem} from "../types/users/IUserItem.ts";
 import {useGetUsersQuery} from "../services/usersApi.ts";
+import {useEffect} from "react";
+import {isTokenExpired} from "../utils/jwt.ts";
 
 const HomePage = () => {
     // const [isError, setUsers] = useState<IUserItem[]>([]);
@@ -9,7 +11,6 @@ const HomePage = () => {
     // const [isError, setError] = useState<string | null>(null);
 
     const {data: myUsers, isLoading, isError} = useGetUsersQuery();
-    console.log("RTK:",myUsers);
 
     //Залежить від 2 параметри і відносно нього виконується даний хук
     // useEffect(() => {
@@ -28,8 +29,12 @@ const HomePage = () => {
     //             setLoading(false);
     //         });
     //},[]);
+    // useEffect(() => {
+    //     console.log("Home page loaded");
+    //     const token = localStorage.getItem("accessToken");
+    //     isTokenExpired(token)
+    // }, [])
 
-    console.log("HomePage Render Component");
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
             <div className="max-w-4xl mx-auto px-6 py-20 text-center">

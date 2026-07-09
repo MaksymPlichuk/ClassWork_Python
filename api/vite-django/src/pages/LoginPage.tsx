@@ -5,12 +5,16 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {FormInput} from "../Components/FormInput.tsx";
 import {useLoginUserMutation} from "../services/usersApi.ts";
+import {useAppDispatch} from "../store";
+import {setCredentials} from "../store/authSlice.ts";
+import type {AuthUser} from "../types/users/AuthUser.ts";
 
 
 const LoginPage = () => {
     const [loading] = useState(false);
 
     const [login] = useLoginUserMutation();
+    const dispatch = useAppDispatch();
 
     const formSchema = z.object({
         email: z
@@ -32,6 +36,13 @@ const LoginPage = () => {
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         try {
             const response = await login(data).unwrap();
+
+            dispatch(setCredentials({
+                //підганяємо під response з views.py
+                access: response.access,
+                refresh: response.refresh,
+                user: response.user as AuthUser,
+            }))
 
             console.log(response)
             //navigate('/')
